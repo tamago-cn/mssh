@@ -32,6 +32,7 @@ func init() {
 func main() {
 	// 加载初始化配置
 	initFile := ".msshrc"
+	cmdline.Setup("mssh", "/tmp/mssh.tmp")
 	cmdline.Run(initFile)
 
 	log.Infoln("main start")
