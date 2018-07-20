@@ -35,6 +35,9 @@ go install
     * 命令行执行：mssh 开启mssh命令行
     [mssh ~]#
 
+    * 查看命令帮助
+    [mssh ~]# help <command(可选，默认显示命令列表)>
+
     * 开启一个日志
     [mssh ~]# log <filename>
 
