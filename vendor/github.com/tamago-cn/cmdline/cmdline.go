@@ -12,7 +12,7 @@ var funcMap map[string]*FuncInfo
 
 func init() {
 	funcMap = make(map[string]*FuncInfo)
-	Regist("reg", "help", Help, "显示帮助信息", `help <command>`, []*Param{
+	Regist("cmdline", "help", Help, "显示帮助信息", `help <command>`, []*Param{
 		&Param{Name: "command", Type: "string", Necessity: false, Desc: "指令名"},
 	})
 }

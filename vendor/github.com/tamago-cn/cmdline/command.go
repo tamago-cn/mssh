@@ -9,9 +9,9 @@ import (
 )
 
 func init() {
-	Regist("inner", "clear", Clear, "清屏", `clear`, []*Param{})
-	Regist("inner", "exit", Exit, "退出", `exit`, []*Param{})
-	Regist("inner", "vim", Vim, "打开vim编辑器", `vim <filename>`, []*Param{
+	Regist("cmdline", "clear", Clear, "清屏", `clear`, []*Param{})
+	Regist("cmdline", "exit", Exit, "退出", `exit`, []*Param{})
+	Regist("cmdline", "vim", Vim, "打开vim编辑器", `vim <filename>`, []*Param{
 		&Param{Name: "filename", Type: "string", Necessity: true, Desc: "文件名"},
 	})
 }
