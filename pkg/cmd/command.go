@@ -155,7 +155,7 @@ func Release(host string) {
 
 // Put 内置命令，批量上传文件
 func Put(file string, dstDir string) {
-	//fmt.Println("func put:", file, toDir)
+	//fmt.Println("func put:", file, dstDir)
 	for host, client := range cliMap {
 		wg.Add(1)
 		go func(host string, client *Client, file, dstDir string) {
@@ -171,6 +171,7 @@ func Put(file string, dstDir string) {
 				log.Errorf("[%s] get session error: %s", host, err.Error())
 				return
 			}
+			file = strings.Replace(file, "@", fmt.Sprintf("download/%s", host), -1)
 			err = scp.CopyPath(file, remotePath, session)
 			if err != nil {
 				log.Errorf("[%s] scp file %s error: %s", host, file, err)
