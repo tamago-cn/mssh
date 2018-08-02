@@ -60,6 +60,7 @@ go install
 
     * 上传文件:
     [mssh ~]# put <localPath> <remoteDir(可选，默认用户主目录，如:/root/)>
+    针对get命令下载的文件，localPath使用'@/<文件名>'的形式可将download下对应host下的的文件上传
 
     * 下载文件:
     [mssh ~]# get <远程文件>
