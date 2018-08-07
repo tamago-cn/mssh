@@ -17,19 +17,24 @@ func init() {
 		Prompt:      "cmdline",
 		HistoryFile: "/tmp/cmdline.tmp",
 	}
+	defaultFunc = func(line string) {
+		fmt.Println("exec with defaultFunc:", line)
+	}
 	Regist("cmdline", "run", Run, "执行脚本文件", `run <filename>`, []*Param{
 		&Param{Name: "filename", Type: "string", Necessity: true, Desc: "脚本文件名"},
 	})
 }
 
 var (
-	conf *Conf
+	conf        *Conf
+	defaultFunc func(string)
 )
 
 // Setup 解释器设置
-func Setup(prompt string, historyFile string) {
+func Setup(prompt string, historyFile string, fn func(string)) {
 	conf.Prompt = prompt
 	conf.HistoryFile = historyFile
+	defaultFunc = fn
 }
 
 // Conf 解释器配置
@@ -145,6 +150,8 @@ func Interpret(in io.ReadCloser) {
 			for _, param := range args[0][1:] {
 				Run(param)
 			}
+		} else {
+			defaultFunc(line)
 		}
 	}
 }

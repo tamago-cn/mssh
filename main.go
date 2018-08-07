@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/tamago-cn/cmdline"
 
-	_ "github.com/tamago-cn/mssh/pkg/cmd"
+	"github.com/tamago-cn/mssh/pkg/cmd"
 )
 
 var (
@@ -32,7 +32,7 @@ func init() {
 func main() {
 	// 加载初始化配置
 	initFile := ".msshrc"
-	cmdline.Setup("mssh", "/tmp/mssh.tmp")
+	cmdline.Setup("mssh", "/tmp/mssh.tmp", cmd.Remote)
 	cmdline.Run(initFile)
 
 	log.Infoln("main start")

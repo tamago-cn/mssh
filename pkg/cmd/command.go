@@ -10,10 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pkg/sftp"
 	log "github.com/sirupsen/logrus"
 	"github.com/tamago-cn/cmdline"
-	"github.com/tmc/scp"
+	"github.com/tamago-cn/mssh/pkg/scp"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -171,8 +170,10 @@ func Put(file string, dstDir string) {
 				log.Errorf("[%s] get session error: %s", host, err.Error())
 				return
 			}
+			// 针对下载的备份做特殊处理
 			file = strings.Replace(file, "@", fmt.Sprintf("download/%s", host), -1)
-			err = scp.CopyPath(file, remotePath, session)
+			//err = scp.CopyPath(file, remotePath, session)
+			scp.CopyToRemote(session, file, remotePath)
 			if err != nil {
 				log.Errorf("[%s] scp file %s error: %s", host, file, err)
 				return
@@ -189,38 +190,19 @@ func Get(file string) {
 		wg.Add(1)
 		go func(host string, client *Client, file string) {
 			defer wg.Done()
-			sftpClient, err := sftp.NewClient(client.Cli)
+			session, err := client.Cli.NewSession()
 			if err != nil {
-				log.Errorf("[%s] get sftpClient error: %s", host, err)
+				log.Errorf("[%s] get session error: %s", host, err)
 				return
 			}
-			defer sftpClient.Close()
-
-			srcFile, err := sftpClient.Open(file)
-			if err != nil {
-				log.Errorf("[%s] open srcFile error: %s", host, err)
-				return
-			}
-			defer srcFile.Close()
-
-			localFileName := path.Base(file)
 			localDir := path.Join(".", "download", host)
-			os.MkdirAll(localDir, 0777)
+			localFileName := path.Base(file)
+			os.MkdirAll(localDir, 0666)
 			localPath := path.Join(localDir, localFileName)
-			dstFile, err := os.Create(localPath)
+			err = scp.CopyFromRemote(session, file, localPath)
 			if err != nil {
-				log.Errorf("[%s] create dstFile error: %s", host, err)
+				log.Errorf("[%s] copy from remote error: %s", host, err)
 				return
-			}
-			defer dstFile.Close()
-
-			buf := make([]byte, 1024)
-			for {
-				n, _ := srcFile.Read(buf)
-				if n == 0 {
-					break
-				}
-				dstFile.Write(buf[0:n])
 			}
 			log.Infof("[%s] get file [%s] to [%s] success", host, file, localPath)
 		}(host, client, file)
